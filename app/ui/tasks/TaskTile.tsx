@@ -3,28 +3,84 @@
 import { useState } from 'react';
 
 interface TaskTileProps {
-  id: string; 
+  id: string;
   name: string;
   description: string;
-//   onEdit?: () => void;
-//   onDelete?: () => void;
+  color: string;
 }
 
-    
-export default function TaskTile({ id, name, description }: TaskTileProps) {
+export default function TaskTile({ id, name, description, color }: TaskTileProps) {
   const [showActions, setShowActions] = useState(false);
 
   const onEdit = (e: React.FormEvent) => {
     e.preventDefault();
-    // alert(`Logged in as: ${email} (simulated)`);
     window.location.href = `/dashboard/tasks/${id}/edit`;
   };
 
-const onDelete = (e: React.FormEvent) => {
+  const onDelete = async (e: React.FormEvent) => {
     e.preventDefault();
-    alert(`Task Deleted`);
+    const confirmDelete = window.confirm('Are you sure you want to delete this task?');
+    if (!confirmDelete) return;
+
+    try {
+      const res = await fetch(`http://localhost:8000/tasks/${id}`, {
+        method: 'DELETE',
+      });
+
+      if (!res.ok) throw new Error(`Failed to delete task: ${res.status}`);
+      alert('Task deleted successfully!');
+      window.location.reload();
+    } catch (err) {
+      console.error('Delete error:', err);
+      alert('Failed to delete task.');
+    }
   };
 
+  const handleStatusUpdate = async (newStatus: string) => {
+    try {
+      const res = await fetch(`http://localhost:8000/tasks/${id}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ status: newStatus }),
+      });
+
+      if (!res.ok) throw new Error(`Failed to update task status: ${res.status}`);
+
+      alert(`Task moved to "${newStatus}"`);
+      window.location.reload();
+    } catch (err) {
+      console.error(err);
+      alert('Failed to update task status.');
+    }
+  };
+
+  const renderStatusButton = () => {
+    if (color === 'blue') {
+      return (
+        <button
+          className="mt-4 w-full bg-blue-500 hover:bg-blue-600 text-white py-1.5 rounded-lg text-sm font-medium transition"
+          onClick={() => handleStatusUpdate('InProgress')}
+        >
+          Start Task
+        </button>
+      );
+    }
+
+    if (color === 'orange') {
+      return (
+        <button
+          className="mt-4 w-full bg-orange-500 hover:bg-orange-600 text-white py-1.5 rounded-lg text-sm font-medium transition"
+          onClick={() => handleStatusUpdate('Completed')}
+        >
+          Mark as Complete
+        </button>
+      );
+    }
+
+    return null;
+  };
 
   return (
     <div
@@ -38,7 +94,10 @@ const onDelete = (e: React.FormEvent) => {
         <p className="text-sm text-gray-600 dark:text-gray-300">{description}</p>
       </div>
 
-      {/* Action Buttons (Edit / Delete) */}
+      {/* Conditional Status Button */}
+      {renderStatusButton()}
+
+      {/* Edit / Delete Buttons */}
       {showActions && (
         <div className="absolute top-2 right-2 flex gap-2">
           <button

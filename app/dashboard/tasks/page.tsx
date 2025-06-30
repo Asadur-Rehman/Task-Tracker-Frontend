@@ -24,7 +24,7 @@ export default function TasksPage() {
       {/* Side-by-side columns */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <TaskColumn title="To Do" color="blue" />
-        <TaskColumn title="In Progress" color="yellow" />
+        <TaskColumn title="In Progress" color="orange" />
         <TaskColumn title="Completed" color="green" />
       </div>
     </main>

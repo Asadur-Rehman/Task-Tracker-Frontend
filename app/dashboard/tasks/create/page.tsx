@@ -7,12 +7,44 @@ export default function Home() {
   const [description, setDescription] = useState('');
   const [date, setDate] = useState('');
 
-  const handleCreate = (e: React.FormEvent) => {
+  const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault();
-    alert(`Task Created: ${name}, ${description}, ${date}`);
-    window.location.href = "/dashboard/tasks";
+  
+    const generateId = () => {
+      const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+      return Array.from({ length: 16 }, () =>
+        chars.charAt(Math.floor(Math.random() * chars.length))
+      ).join('');
+    };
+  
+    const taskData = {
+      id: generateId(),
+      name,
+      description,
+      startDate: new Date().toISOString(), // or let user choose
+      deadline: new Date(date).toISOString(),
+      status: 'Todo', // or let user select this
+    };
+  
+    try {
+      const res = await fetch('http://localhost:8000/tasks', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(taskData),
+      });
+  
+      if (!res.ok) throw new Error(`Failed to create task: ${res.status}`);
+  
+      alert('Task created successfully!');
+      window.location.href = '/dashboard/tasks';
+    } catch (err) {
+      console.error(err);
+      alert('Failed to create task');
+    }
   };
-
+  
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 px-4">
       <form onSubmit={handleCreate} className="w-full max-w-md bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-xl space-y-6">
