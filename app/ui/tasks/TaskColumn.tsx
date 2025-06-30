@@ -7,6 +7,7 @@ interface Task {
   id: string;
   name: string;
   description: string;
+  deadline: string
 }
 
 interface TaskColumnProps {
@@ -58,6 +59,7 @@ export default function TaskColumn({ title, color }: TaskColumnProps) {
               id={task.id}
               name={task.name}
               description={task.description}
+              deadline={task.deadline}
               color={color}
             />
           ))

@@ -6,10 +6,11 @@ interface TaskTileProps {
   id: string;
   name: string;
   description: string;
+  deadline: string;
   color: string;
 }
 
-export default function TaskTile({ id, name, description, color }: TaskTileProps) {
+export default function TaskTile({ id, name, description, deadline, color }: TaskTileProps) {
   const [showActions, setShowActions] = useState(false);
 
   const onEdit = (e: React.FormEvent) => {
@@ -82,6 +83,12 @@ export default function TaskTile({ id, name, description, color }: TaskTileProps
     return null;
   };
 
+  const formattedDeadline = new Date(deadline).toLocaleDateString(undefined, {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  });
+
   return (
     <div
       className="rounded-lg border border-gray-200 p-4 shadow-sm bg-white dark:bg-gray-800 relative hover:shadow-md transition"
@@ -92,6 +99,7 @@ export default function TaskTile({ id, name, description, color }: TaskTileProps
       <div className="space-y-1">
         <h3 className="text-lg font-semibold text-gray-800 dark:text-white">{name}</h3>
         <p className="text-sm text-gray-600 dark:text-gray-300">{description}</p>
+        <p className="text-xs text-gray-500 dark:text-gray-400">Deadline: {formattedDeadline}</p>
       </div>
 
       {/* Conditional Status Button */}
