@@ -1,6 +1,6 @@
 'use client';
 
-import TaskColumn from '@/app/ui/tasks/TaskColumn';
+import TaskColumn from '@/src/ui/tasks/TaskColumn';
 import { PlusIcon } from '@heroicons/react/24/outline';
 
 const handleCreate = (e: React.FormEvent) => {

@@ -1,54 +1,84 @@
 'use client';
 
-import { useState } from 'react';
+import { useParams } from 'next/navigation';
+import { useEffect, useState } from 'react';
 
-export default function Home() {
+export default function EditTaskPage() {
+  const { id } = useParams();
+  const taskId = id as string;
+
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [date, setDate] = useState('');
+  const [status, setStatus] = useState('');
+  const [loading, setLoading] = useState(true);
 
-  const handleCreate = async (e: React.FormEvent) => {
-    e.preventDefault();
-  
-    const generateId = () => {
-      const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-      return Array.from({ length: 16 }, () =>
-        chars.charAt(Math.floor(Math.random() * chars.length))
-      ).join('');
+  useEffect(() => {
+    const fetchTask = async () => {
+      try {
+        const res = await fetch(`http://localhost:8000/tasks/${taskId}`);
+        if (!res.ok) throw new Error('Task not found');
+        const data = await res.json();
+
+        setName(data.name || '');
+        setDescription(data.description || '');
+        setDate(data.deadline ? data.deadline.split('T')[0] : '');
+        setStatus(data.status || 'Todo');
+      } catch (err) {
+        console.error('Error loading task:', err);
+        alert('Failed to load task');
+      } finally {
+        setLoading(false);
+      }
     };
-  
-    const taskData = {
-      id: generateId(),
+
+    if (taskId) {
+      fetchTask();
+    }
+  }, [taskId]);
+
+  const handleEdit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    const updatedTask = {
       name,
       description,
-      startDate: new Date().toISOString(), // or let user choose
+      startDate: new Date().toISOString(),
       deadline: new Date(date).toISOString(),
-      status: 'Todo', // or let user select this
+      status: status,
     };
-  
+
     try {
-      const res = await fetch('http://localhost:8000/tasks', {
-        method: 'POST',
+      const res = await fetch(`http://localhost:8000/tasks/${taskId}`, {
+        method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(taskData),
+        body: JSON.stringify(updatedTask),
       });
-  
-      if (!res.ok) throw new Error(`Failed to create task: ${res.status}`);
-  
-      alert('Task created successfully!');
+
+      if (!res.ok) throw new Error(`Failed to update task: ${res.status}`);
+
+      alert('Task updated successfully!');
       window.location.href = '/dashboard/tasks';
     } catch (err) {
       console.error(err);
-      alert('Failed to create task');
+      alert('Failed to update task');
     }
   };
-  
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-gray-900">
+        <p className="text-gray-700 dark:text-gray-200">Loading task...</p>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 px-4">
-      <form onSubmit={handleCreate} className="w-full max-w-md bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-xl space-y-6">
-        <h2 className="text-2xl font-bold text-gray-800 dark:text-white text-center">Create Task</h2>
+      <form onSubmit={handleEdit} className="w-full max-w-md bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-xl space-y-6">
+        <h2 className="text-2xl font-bold text-gray-800 dark:text-white text-center">Edit Task</h2>
 
         <div>
           <label htmlFor="name" className="block mb-1 text-sm font-medium text-gray-700 dark:text-gray-300">
@@ -105,7 +135,7 @@ export default function Home() {
           type="submit"
           className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2.5 rounded-lg transition duration-200 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:focus:ring-blue-800"
         >
-          Create Task
+          Save Changes
         </button>
       </form>
     </div>
