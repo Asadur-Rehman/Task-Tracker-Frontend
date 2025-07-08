@@ -3,14 +3,15 @@
 import {
   HomeIcon,
   DocumentDuplicateIcon,
+  UserIcon,
 } from '@heroicons/react/24/outline';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import clsx from 'clsx';
 
-// Define your navigation links
 const links = [
   { name: 'Home', href: '/dashboard', icon: HomeIcon },
+  { name: 'Profile', href: '/dashboard/profile', icon: UserIcon },
   { name: 'Tasks', href: '/dashboard/tasks', icon: DocumentDuplicateIcon },
 ];
 
@@ -18,7 +19,7 @@ export default function NavLinks() {
   const pathname = usePathname();
 
   return (
-    <div className="flex flex-col gap-2"> {/* <- This fixes the spacing */}
+    <div className="flex flex-col gap-2">
       {links.map((link) => {
         const LinkIcon = link.icon;
         return (

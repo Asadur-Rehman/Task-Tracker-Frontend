@@ -1,23 +1,29 @@
 "use client";
 
 import Link from 'next/link';
-import NavLinks from '@/src/ui/dashboard/nav-links'; // Keep this if it renders the navigation items
+import NavLinks from '@/src/components/dashboard/nav-links'; // Keep this if it renders the navigation items
 import { PowerIcon } from '@heroicons/react/24/outline';
 
 export default function SideNav() {
   const handleSignOut = () => {
-    // alert("You have been signed out (simulated).");
-    Optional: window.location.href = "/";
-  };
 
+    localStorage.removeItem('token');
+    localStorage.clear();
+  
+    document.cookie = 'idToken=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
+
+    window.location.href = "/";
+  };
+  
+  
   return (
     <aside className="flex h-full flex-col bg-white border-r px-3 py-4 md:px-4 shadow-sm">
-      {/* App Name Header */}
+
       <Link href="/" className="mb-6 flex items-center justify-center text-blue-600">
         <span className="text-2xl font-extrabold tracking-tight">Task Tracker</span>
       </Link>
 
-      {/* Nav Links */}
+
       <nav className="flex grow flex-col justify-between space-y-4">
         <NavLinks />
 

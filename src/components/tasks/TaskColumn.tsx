@@ -1,14 +1,8 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import TaskTile from './TaskTile';
-
-interface Task {
-  id: string;
-  name: string;
-  description: string;
-  deadline: string
-}
+import { fetchTasksByStatus, Task } from '../../services/api/tasks/fetchTasksByStatus';
 
 interface TaskColumnProps {
   title: string;
@@ -16,8 +10,6 @@ interface TaskColumnProps {
 }
 
 export default function TaskColumn({ title, color }: TaskColumnProps) {
-  const [tasks, setTasks] = useState<Task[]>([]);
-
   const borderColor = {
     blue: 'border-blue-400',
     orange: 'border-orange-400',
@@ -30,29 +22,26 @@ export default function TaskColumn({ title, color }: TaskColumnProps) {
     green: 'text-green-600',
   }[color];
 
-  useEffect(() => {
-    const fetchTasks = async () => {
-      try {
-        const response = await fetch(`http://localhost:8000/tasks/${color}`);
-        if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
-        const data = await response.json();
-        setTasks(data);
-      } catch (error) {
-        console.error(`Failed to fetch ${color} tasks:`, error);
-      }
-    };
-
-    fetchTasks();
-  }, [color]);
+  const {
+    data: tasks,
+    isLoading,
+    isError,
+    error,
+  } = useQuery({
+    queryKey: ['tasks', color],
+    queryFn: () => fetchTasksByStatus(color),
+  });
 
   return (
     <div className={`flex flex-col rounded-lg border-2 ${borderColor} bg-white p-4 shadow-sm min-h-[500px]`}>
-      <h2 className={`text-lg font-semibold ${titleColor} mb-4`}>
-        {title}
-      </h2>
+      <h2 className={`text-lg font-semibold ${titleColor} mb-4`}>{title}</h2>
 
       <div className="flex flex-col gap-4">
-        {tasks.length > 0 ? (
+        {isLoading ? (
+          <p className="text-gray-400 italic">Loading tasks...</p>
+        ) : isError ? (
+          <p className="text-red-500 italic">Error: {(error as Error).message}</p>
+        ) : tasks && tasks.length > 0 ? (
           tasks.map((task) => (
             <TaskTile
               key={task.id}

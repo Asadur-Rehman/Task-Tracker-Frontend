@@ -1,50 +1,35 @@
 'use client';
 
 import { useState } from 'react';
+import { useCreateTask } from '../../../../hooks/tasks/useCreateTask';
 
 export default function Home() {
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [date, setDate] = useState('');
 
-  const handleCreate = async (e: React.FormEvent) => {
+  const mutation = useCreateTask();
+
+  const handleCreate = (e: React.FormEvent) => {
     e.preventDefault();
-  
+
     const generateId = () => {
       const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
       return Array.from({ length: 16 }, () =>
         chars.charAt(Math.floor(Math.random() * chars.length))
       ).join('');
     };
-  
-    const taskData = {
+
+    mutation.mutate({
       id: generateId(),
       name,
       description,
       startDate: new Date().toISOString(),
       deadline: new Date(date).toISOString(),
       status: 'Todo',
-    };
-  
-    try {
-      const res = await fetch('http://localhost:8000/tasks', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(taskData),
-      });
-  
-      if (!res.ok) throw new Error(`Failed to create task: ${res.status}`);
-  
-      alert('Task created successfully!');
-      window.location.href = '/dashboard/tasks';
-    } catch (err) {
-      console.error(err);
-      alert('Failed to create task');
-    }
+    });
   };
-  
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 px-4">
       <form onSubmit={handleCreate} className="w-full max-w-md bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-xl space-y-6">
@@ -103,9 +88,10 @@ export default function Home() {
 
         <button
           type="submit"
+          disabled={mutation.isPending}
           className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2.5 rounded-lg transition duration-200 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:focus:ring-blue-800"
         >
-          Create Task
+          {mutation.isPending ? 'Creating...' : 'Create Task'}
         </button>
       </form>
     </div>
