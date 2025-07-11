@@ -3,7 +3,7 @@ import { cookies } from 'next/headers';
 
 
 export async function createSession(idToken: string) {
-  const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000); // 7 days
+  const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
   const cookieStore = cookies();
 
   (await cookieStore).set('token', idToken, {

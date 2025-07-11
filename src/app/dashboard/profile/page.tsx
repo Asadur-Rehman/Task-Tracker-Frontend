@@ -1,45 +1,21 @@
 'use client';
 
+import { useUser } from '../../../hooks/profile/useProfile';
+import { useUpdateUser } from '../../../hooks/profile/useUpdateProfile';
 import { useState, useEffect } from 'react';
 
-interface User {
-  uid: string;
-  email: string;
-  displayName?: string;
-  photoURL?: string;
-  createdAt: Date;
-  updatedAt: Date;
-  preferences?: {
-    theme: 'light' | 'dark';
-    tasksPerPage: number;
-    defaultSort: string;
-  };
-}
-
 export default function ProfilePage() {
-  // TODO: Replace with real user loading logic
-  const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
+  const { data: userData, isLoading, isError } = useUser();
+  const updateUser = useUpdateUser();
+
+  const [user, setUser] = useState(userData);
+  const [isEditing, setIsEditing] = useState(false);
 
   useEffect(() => {
-    // Simulate loading user from backend (replace this with actual fetch)
-    setTimeout(() => {
-      const fetchedUser: User = {
-        uid: 'abc123',
-        email: 'asad@example.com',
-        createdAt: new Date('2024-06-10'),
-        updatedAt: new Date(),
-        displayName: '', // First time
-        photoURL: '',
-        preferences: undefined, // First time
-      };
+    if (userData) setUser(userData);
+  }, [userData]);
 
-      setUser(fetchedUser);
-      setLoading(false);
-    }, 500);
-  }, []);
-
-  if (loading || !user) {
+  if (isLoading || !user) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-sky-100 to-blue-200 text-xl font-semibold">
         Loading profile...
@@ -47,24 +23,37 @@ export default function ProfilePage() {
     );
   }
 
-  const isFirstTime =
-    !user.displayName || !user.photoURL || !user.preferences;
-
-  if (isFirstTime) {
+  if (isError) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-sky-100 to-blue-200 flex items-center justify-center px-4 py-12">
-        <div className="bg-white/80 backdrop-blur-lg border border-blue-100 shadow-xl rounded-3xl p-8 max-w-xl w-full text-center">
-          <h1 className="text-3xl font-bold text-gray-800 mb-4">Welcome!</h1>
-          <p className="text-gray-600 mb-6">
-            Let's complete your profile setup so you can personalize your experience.
-          </p>
-          <button className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-full transition">
-            Set Up Profile
-          </button>
-        </div>
+      <div className="min-h-screen flex items-center justify-center text-red-600 font-medium text-xl">
+        Failed to load profile.
       </div>
     );
   }
+
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
+    const { name, value } = e.target;
+    setUser((prev) =>
+      prev
+        ? {
+            ...prev,
+            preferences: {
+              ...prev.preferences!,
+              [name]: name === 'tasksPerPage' ? parseInt(value) || 0 : value,
+            },
+          }
+        : undefined
+    );
+  };
+
+  const handleSave = () => {
+    if (user) {
+      updateUser.mutate(user);
+      setIsEditing(false);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-sky-100 to-blue-200 flex items-center justify-center px-4 py-12">
@@ -72,11 +61,13 @@ export default function ProfilePage() {
         <div className="flex flex-col items-center text-center">
           <div className="relative w-28 h-28 mb-5">
             <img
-              src={user.photoURL || `https://api.dicebear.com/7.x/initials/svg?seed=${user.displayName}`}
+              src={
+                user.photoURL ||
+                `https://api.dicebear.com/7.x/initials/svg?seed=${user.displayName}`
+              }
               alt="User avatar"
               className="w-full h-full rounded-full object-cover border-4 border-white shadow-lg"
             />
-            <div className="absolute bottom-1 right-1 w-4 h-4 bg-green-400 border-2 border-white rounded-full animate-pulse" />
           </div>
 
           <h1 className="text-3xl font-bold text-gray-800">{user.displayName}</h1>
@@ -87,17 +78,70 @@ export default function ProfilePage() {
 
           <div className="mt-6 text-left w-full">
             <h3 className="text-sm font-semibold text-gray-500 mb-2">Preferences</h3>
-            <ul className="text-sm text-gray-700 space-y-1">
-              <li><strong>Theme:</strong> {user.preferences?.theme}</li>
-              <li><strong>Tasks per page:</strong> {user.preferences?.tasksPerPage}</li>
-              <li><strong>Default sort:</strong> {user.preferences?.defaultSort}</li>
-            </ul>
+
+            {isEditing ? (
+              <form className="space-y-4">
+                <div className="flex flex-col">
+                  <label className="text-sm font-medium text-gray-600">Theme</label>
+                  <select
+                    name="theme"
+                    value={user.preferences?.theme}
+                    onChange={handleChange}
+                    className="border rounded px-3 py-2"
+                  >
+                    <option value="light">Light</option>
+                    <option value="dark">Dark</option>
+                  </select>
+                </div>
+
+                <div className="flex flex-col">
+                  <label className="text-sm font-medium text-gray-600">Tasks Per Page</label>
+                  <input
+                    type="number"
+                    name="tasksPerPage"
+                    min={1}
+                    value={user.preferences?.tasksPerPage ?? 1}
+                    onChange={handleChange}
+                    className="border rounded px-3 py-2"
+                  />
+                </div>
+
+                <div className="flex flex-col">
+                  <label className="text-sm font-medium text-gray-600">Default Sort</label>
+                  <select
+                    name="defaultSort"
+                    value={user.preferences?.defaultSort}
+                    onChange={handleChange}
+                    className="border rounded px-3 py-2"
+                  >
+                    <option value="dueDate">Due Date</option>
+                    <option value="priority">Priority</option>
+                    <option value="createDate">Create Date</option>
+                  </select>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={handleSave}
+                  className="mt-4 px-6 py-2 bg-green-600 text-white rounded-full hover:bg-green-700"
+                >
+                  Save
+                </button>
+              </form>
+            ) : (
+              <ul className="text-sm text-gray-700 space-y-1">
+                <li><strong>Theme:</strong> {user.preferences?.theme}</li>
+                <li><strong>Tasks per page:</strong> {user.preferences?.tasksPerPage}</li>
+                <li><strong>Default sort:</strong> {user.preferences?.defaultSort}</li>
+              </ul>
+            )}
           </div>
 
           <button
             className="mt-6 px-6 py-2 rounded-full bg-blue-600 hover:bg-blue-700 text-white font-medium transition duration-200 shadow-md"
+            onClick={() => setIsEditing(!isEditing)}
           >
-            Edit Profile
+            {isEditing ? 'Cancel' : 'Edit Profile'}
           </button>
         </div>
       </div>
