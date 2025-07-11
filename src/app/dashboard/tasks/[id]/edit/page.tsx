@@ -5,7 +5,6 @@ import { useEffect, useState } from 'react';
 import { useTask } from '../../../../../hooks/tasks/useTask';
 import { useUpdateTask } from '../../../../../hooks/tasks/useUpdateTask';
 import { Timestamp } from 'firebase/firestore';
-
 interface Task {
   id: string;
   name: string;
@@ -73,7 +72,8 @@ export default function EditTaskPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 px-4">
+    <div className="flex items-center justify-center min-h-screen bg-gray-50 dark:bg-gray-900 px-4">
+      <div className="w-full max-w-md">
       <form
         onSubmit={handleEdit}
         className="w-full max-w-md bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-xl space-y-6"
@@ -138,6 +138,7 @@ export default function EditTaskPage() {
           {updateMutation.isPending ? 'Saving...' : 'Save Changes'}
         </button>
       </form>
+      </div>
     </div>
   );
 }

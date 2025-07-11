@@ -11,7 +11,7 @@ const handleCreate = (e: React.FormEvent) => {
 
 export default function TasksPage() {
   return (
-    <main className="p-6 max-w-7xl mx-auto">
+    <main className="p-6 max-w-7xl mx-auto m-6">
 
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold text-gray-800">My Tasks</h1>
