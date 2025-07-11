@@ -1,9 +1,19 @@
-"use client";
+'use client';
 
 import { ArrowRightIcon } from '@heroicons/react/24/outline';
 import Link from 'next/link';
+import { useState, useEffect } from 'react';
+
 
 export default function Home() {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  useEffect(() => {
+    const hasToken = document.cookie.includes('idToken');
+    setIsLoggedIn(hasToken);
+  }, []);
+
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-100 to-blue-200 p-4">
       <div className="flex flex-col items-center gap-6 rounded-2xl bg-white shadow-xl p-10 md:p-16 text-center">
@@ -22,7 +32,7 @@ export default function Home() {
           href="/login"
           className="inline-flex items-center gap-3 rounded-lg bg-blue-600 px-6 py-3 text-sm md:text-base font-medium text-white shadow-md hover:bg-blue-500 transition"
         >
-          <span>Log in</span>
+          {isLoggedIn ? <span>Dashboard</span> : <span>Login</span>}
           <ArrowRightIcon className="w-5 md:w-6" />
         </Link>
       </div>

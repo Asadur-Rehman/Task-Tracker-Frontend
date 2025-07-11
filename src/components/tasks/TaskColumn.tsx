@@ -9,6 +9,8 @@ interface TaskColumnProps {
   color: 'blue' | 'orange' | 'green';
 }
 
+
+
 export default function TaskColumn({ title, color }: TaskColumnProps) {
   const borderColor = {
     blue: 'border-blue-400',
@@ -22,6 +24,8 @@ export default function TaskColumn({ title, color }: TaskColumnProps) {
     green: 'text-green-600',
   }[color];
 
+  const taskStatus = {'blue': 'todo', 'orange': 'inprogress', 'green': 'completed'}
+
   const {
     data: tasks,
     isLoading,
@@ -29,7 +33,7 @@ export default function TaskColumn({ title, color }: TaskColumnProps) {
     error,
   } = useQuery({
     queryKey: ['tasks', color],
-    queryFn: () => fetchTasksByStatus(color),
+    queryFn: () => fetchTasksByStatus(taskStatus[color] as 'todo' | 'inprogress' | 'completed'),
   });
 
   return (

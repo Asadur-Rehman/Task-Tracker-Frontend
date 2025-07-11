@@ -49,7 +49,7 @@ interface LoginPayload {
 }
 
 export async function loginUser(payload: LoginPayload) {
-  const res = await fetch('http://localhost:8000/users/login', {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_LOCALHOST}/auth/login`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(payload),

@@ -2,6 +2,7 @@
 
 import { useMutation } from '@tanstack/react-query';
 import { signupUser } from '../../services/api/auth/signup';
+import { toast } from 'sonner';
 
 interface SignupInput {
   email: string;
@@ -21,11 +22,11 @@ export function useSignup() {
         },
       }),
     onSuccess: () => {
-      alert('Signup successful!');
+      toast.success('Signup successful!');
       window.location.href = '/login';
     },
     onError: (error: Error) => {
-      alert(error.message);
+      toast.error(error.message);
     },
   });
 }

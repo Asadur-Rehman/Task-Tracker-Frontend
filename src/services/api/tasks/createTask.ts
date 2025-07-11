@@ -8,11 +8,14 @@ export interface CreateTaskInput {
   }
   
   export async function createTask(task: CreateTaskInput): Promise<void> {
-    const res = await fetch('http://localhost:8000/tasks', {
+    const token = localStorage.getItem('token');
+    if (!token) throw new Error('User not authenticated');
+
+    const res = await fetch(`${process.env.NEXT_PUBLIC_LOCALHOST}/tasks`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${localStorage.getItem('token')}`,
+        Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify(task),
     });

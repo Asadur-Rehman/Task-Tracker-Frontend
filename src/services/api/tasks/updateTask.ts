@@ -10,11 +10,14 @@ export interface UpdateTaskInput {
     taskId,
     ...task
   }: UpdateTaskInput & { taskId: string }): Promise<void> {
-    const res = await fetch(`http://localhost:8000/tasks/${taskId}`, {
+    const token = localStorage.getItem('token');
+    if (!token) throw new Error('User not authenticated');
+
+    const res = await fetch(`${process.env.NEXT_PUBLIC_LOCALHOST}/tasks/${taskId}`, {
       method: 'PATCH',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${localStorage.getItem('token')}`,
+        Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify({
         ...task,

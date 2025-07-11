@@ -1,6 +1,6 @@
 'use client';
 
-import { useTasks } from '../hooks/tasks/useTasks';
+import { useTasks } from '../../hooks/tasks/useTasks';
 
 export default function TaskList() {
   const { data: tasks, isLoading, error } = useTasks();

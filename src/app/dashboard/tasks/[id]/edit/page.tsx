@@ -4,6 +4,15 @@ import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { useTask } from '../../../../../hooks/tasks/useTask';
 import { useUpdateTask } from '../../../../../hooks/tasks/useUpdateTask';
+import { Timestamp } from 'firebase/firestore';
+
+interface Task {
+  id: string;
+  name: string;
+  description: string;
+  deadline: Timestamp | string | Date | null;
+  status: 'Todo' | 'In Progress' | 'Completed';
+}
 
 export default function EditTaskPage() {
   const { id } = useParams();
@@ -14,20 +23,38 @@ export default function EditTaskPage() {
   const [date, setDate] = useState('');
   const [status, setStatus] = useState('Todo');
 
-  const { data: task, isLoading, isError } = useTask(taskId);
+  const {
+    data: task,
+    isLoading,
+    isError,
+  } = useTask(taskId) as {
+    data: Task | undefined;
+    isLoading: boolean;
+    isError: boolean;
+  };
+
   const updateMutation = useUpdateTask();
 
   useEffect(() => {
     if (task) {
       setName(task.name || '');
       setDescription(task.description || '');
-      setDate(task.deadline?.split('T')[0] || '');
+
+      const deadlineDate =
+        typeof task.deadline === 'string'
+          ? new Date(task.deadline)
+          : (task.deadline as Timestamp)?.toDate?.();
+
+      const isoDate = deadlineDate?.toISOString().split('T')[0] || '';
+      setDate(isoDate);
+
       setStatus(task.status || 'Todo');
     }
   }, [task]);
 
   const handleEdit = (e: React.FormEvent) => {
     e.preventDefault();
+
     updateMutation.mutate({
       taskId,
       name,
@@ -47,11 +74,19 @@ export default function EditTaskPage() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 px-4">
-      <form onSubmit={handleEdit} className="w-full max-w-md bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-xl space-y-6">
+      <form
+        onSubmit={handleEdit}
+        className="w-full max-w-md bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-xl space-y-6"
+      >
         <h2 className="text-2xl font-bold text-center text-gray-800 dark:text-white">Edit Task</h2>
 
         <div>
-          <label htmlFor="name" className="block mb-1 text-sm font-medium text-gray-700 dark:text-gray-300">Task Name</label>
+          <label
+            htmlFor="name"
+            className="block mb-1 text-sm font-medium text-gray-700 dark:text-gray-300"
+          >
+            Task Name
+          </label>
           <input
             id="name"
             value={name}
@@ -62,7 +97,12 @@ export default function EditTaskPage() {
         </div>
 
         <div>
-          <label htmlFor="description" className="block mb-1 text-sm font-medium text-gray-700 dark:text-gray-300">Description</label>
+          <label
+            htmlFor="description"
+            className="block mb-1 text-sm font-medium text-gray-700 dark:text-gray-300"
+          >
+            Description
+          </label>
           <textarea
             id="description"
             value={description}
@@ -74,7 +114,12 @@ export default function EditTaskPage() {
         </div>
 
         <div>
-          <label htmlFor="date" className="block mb-1 text-sm font-medium text-gray-700 dark:text-gray-300">Due Date</label>
+          <label
+            htmlFor="date"
+            className="block mb-1 text-sm font-medium text-gray-700 dark:text-gray-300"
+          >
+            Due Date
+          </label>
           <input
             type="date"
             id="date"

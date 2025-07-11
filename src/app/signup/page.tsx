@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useSignup } from '../../hooks/auth/useSignup';
+import { toast } from 'sonner';
 
 export default function SignupPage() {
   const [email, setEmail] = useState('');
@@ -13,7 +14,7 @@ export default function SignupPage() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (password !== confirmPassword) {
-      alert('Passwords do not match.');
+      toast.error('Passwords do not match.');
       return;
     }
     signupMutation.mutate({ email, password });

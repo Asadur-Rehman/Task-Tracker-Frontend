@@ -5,10 +5,13 @@ export interface Task {
     deadline: string;
   }
   
-  export async function fetchTasksByStatus(status: 'blue' | 'orange' | 'green'): Promise<Task[]> {
-    const response = await fetch(`http://localhost:8000/tasks/${status}`, {
+  export async function fetchTasksByStatus(status: 'todo' | 'inprogress' | 'completed'): Promise<Task[]> {
+    const token = localStorage.getItem('token');
+    if (!token) throw new Error('User not authenticated');
+
+    const response = await fetch(`${process.env.NEXT_PUBLIC_LOCALHOST}/tasks/${status}`, {
       headers: {
-        Authorization: `Bearer ${localStorage.getItem('token')}`,
+        Authorization: `Bearer ${token}`,
       },
     });
   

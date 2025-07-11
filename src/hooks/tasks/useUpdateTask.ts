@@ -2,17 +2,18 @@
 
 import { useMutation } from '@tanstack/react-query';
 import { updateTask } from '../../services/api/tasks/updateTask';
+import { toast } from 'sonner';
 
 export function useUpdateTask() {
   return useMutation({
     mutationFn: updateTask,
     onSuccess: () => {
-      alert('Task updated successfully!');
+      toast.success('Task updated successfully!');
       window.location.href = '/dashboard/tasks';
     },
     onError: (err: Error) => {
       console.error(err);
-      alert('Failed to update task');
+      toast.error('Failed to update task');
     },
   });
 }

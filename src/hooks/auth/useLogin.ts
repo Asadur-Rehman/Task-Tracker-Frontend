@@ -2,6 +2,7 @@
 
 import { useMutation } from '@tanstack/react-query';
 import { loginUser } from '../../services/api/auth/login';
+import { toast } from 'sonner';
 
 export function useLogin() {
   return useMutation({
@@ -14,7 +15,7 @@ export function useLogin() {
       window.location.href = '/dashboard';
     },
     onError: (error: Error) => {
-      alert(error.message);
+      toast.error(error.message);
     },
   });
 }

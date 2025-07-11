@@ -2,6 +2,7 @@
 
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { deleteTask } from '../../services/api/tasks/deleteTask';
+import { toast } from 'sonner';
 
 export function useDeleteTask(taskId: string) {
   const queryClient = useQueryClient();
@@ -9,12 +10,12 @@ export function useDeleteTask(taskId: string) {
   return useMutation({
     mutationFn: () => deleteTask(taskId),
     onSuccess: () => {
-      alert('Task deleted successfully!');
+      toast.success('Task deleted successfully!');
       queryClient.invalidateQueries();
     },
     onError: (err) => {
       console.error('Delete error:', err);
-      alert('Failed to delete task.');
+      toast.error('Failed to delete task.');
     },
   });
 }

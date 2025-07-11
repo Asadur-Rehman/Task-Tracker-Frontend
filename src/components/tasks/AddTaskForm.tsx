@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { useAddTask } from '../hooks/tasks/useAddTask';
+import { useAddTask } from '../../hooks/tasks/useAddTask';
 
 export default function AddTaskForm() {
   const [name, setName] = useState('');

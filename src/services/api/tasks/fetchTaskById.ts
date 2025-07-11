@@ -10,7 +10,7 @@ export interface Task {
     const token = localStorage.getItem('token');
     if (!token) throw new Error('User not authenticated');
   
-    const res = await fetch(`http://localhost:8000/tasks/${taskId}`, {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_LOCALHOST}/tasks/${taskId}`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },

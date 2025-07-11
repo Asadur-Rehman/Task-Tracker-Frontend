@@ -9,7 +9,7 @@ export interface SignupPayload {
   }
 
 export async function signupUser(payload: SignupPayload) {
-    const res = await fetch('http://localhost:8000/users/signup', {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_LOCALHOST}/users/signup`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
