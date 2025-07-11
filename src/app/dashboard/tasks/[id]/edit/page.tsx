@@ -9,7 +9,7 @@ interface Task {
   id: string;
   name: string;
   description: string;
-  deadline: Timestamp | string | Date | null;
+  deadline: Timestamp;
   status: 'Todo' | 'In Progress' | 'Completed';
 }
 
@@ -38,18 +38,17 @@ export default function EditTaskPage() {
     if (task) {
       setName(task.name || '');
       setDescription(task.description || '');
-
-      const deadlineDate =
-        typeof task.deadline === 'string'
-          ? new Date(task.deadline)
-          : (task.deadline as Timestamp)?.toDate?.();
-
-      const isoDate = deadlineDate?.toISOString().split('T')[0] || '';
+  
+      const deadlineSeconds = (task.deadline as any)?._seconds;
+      const deadlineDate = new Date(deadlineSeconds * 1000);
+      const isoDate = deadlineDate.toISOString().split('T')[0];
       setDate(isoDate);
-
+  
       setStatus(task.status || 'Todo');
     }
   }, [task]);
+  
+  
 
   const handleEdit = (e: React.FormEvent) => {
     e.preventDefault();

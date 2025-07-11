@@ -3,12 +3,13 @@
 import { useState } from 'react';
 import { useDeleteTask } from '../../hooks/tasks/useDeleteTask';
 import { useUpdateTaskStatus } from '../../hooks/tasks/useUpdateTaskStatus';
+import { Timestamp } from 'firebase/firestore';
 
 interface TaskTileProps {
   id: string;
   name: string;
   description: string;
-  deadline: string;
+  deadline: Timestamp; 
   color: string;
 }
 
@@ -60,11 +61,13 @@ export default function TaskTile({ id, name, description, deadline, color }: Tas
     return null;
   };
 
-  const formattedDeadline = new Date(deadline).toLocaleDateString(undefined, {
+  const formattedDeadline = new Date(deadline._seconds * 1000).toLocaleDateString('en-GB', {
     year: 'numeric',
     month: 'long',
     day: 'numeric',
+    timeZone: 'UTC',
   });
+  
 
   return (
     <div
