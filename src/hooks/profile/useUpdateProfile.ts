@@ -7,6 +7,7 @@ import { toast } from 'sonner';
 export function useUpdateUser() {
   return useMutation({
     mutationFn: updateUser,
+    
     onSuccess: () => {
       toast.success('Profile updated successfully!');
     },
@@ -14,5 +15,6 @@ export function useUpdateUser() {
       console.error(err);
       toast.error('Failed to update profile.');
     },
+    
   });
 }

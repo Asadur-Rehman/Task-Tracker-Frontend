@@ -17,12 +17,14 @@ interface UpdateUserProfile {
     const localId = localStorage.getItem('localId');
     if (!localId) throw new Error('User not autheticated');
 
+    console.log(user);
+
     const res = await fetch(`${process.env.NEXT_PUBLIC_LOCALHOST}/users/${localId}`, {
       method: 'PATCH',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({    user    }),
+      body: JSON.stringify(user),
     });
   
     if (!res.ok) {

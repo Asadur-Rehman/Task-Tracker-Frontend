@@ -3,6 +3,7 @@
 import { useUser } from '../../../hooks/profile/useProfile';
 import { useUpdateUser } from '../../../hooks/profile/useUpdateProfile';
 import { useState, useEffect } from 'react';
+import { Timestamp } from 'firebase/firestore';
 
 export default function ProfilePage() {
   const { data: userData, isLoading, isError } = useUser();
@@ -35,25 +36,42 @@ export default function ProfilePage() {
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
     const { name, value } = e.target;
-    setUser((prev) =>
-      prev
-        ? {
-            ...prev,
-            preferences: {
-              ...prev.preferences!,
-              [name]: name === 'tasksPerPage' ? parseInt(value) || 0 : value,
-            },
-          }
-        : undefined
-    );
+    setUser((prev) => {
+      if (!prev) return prev;
+  
+      if (['theme', 'tasksPerPage', 'defaultSort'].includes(name)) {
+        return {
+          ...prev,
+          preferences: {
+            ...prev.preferences!,
+            [name]: name === 'tasksPerPage' ? parseInt(value) || 0 : value,
+          },
+        };
+      }
+  
+      return {
+        ...prev,
+        [name]: value,
+      };
+    });
   };
+  
 
   const handleSave = () => {
     if (user) {
-      updateUser.mutate(user);
+      const { createdAt, ...rest } = user;
+      updateUser.mutate(rest);
       setIsEditing(false);
     }
   };
+  
+
+  const formattedCreatedAt = new Date(user.createdAt._seconds * 1000).toLocaleDateString('en-GB', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+    timeZone: 'UTC',
+  });
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-sky-100 to-blue-200 flex items-center justify-center px-4 py-12">
@@ -73,7 +91,7 @@ export default function ProfilePage() {
           <h1 className="text-3xl font-bold text-gray-800">{user.displayName}</h1>
           <p className="text-gray-600 text-sm mt-1">{user.email}</p>
           <p className="text-gray-400 text-xs mt-1">
-            Joined on {new Date(user.createdAt).toLocaleDateString()}
+            Joined on {formattedCreatedAt}
           </p>
 
           <div className="mt-6 text-left w-full">
@@ -81,6 +99,18 @@ export default function ProfilePage() {
 
             {isEditing ? (
               <form className="space-y-4">
+                <div className="flex flex-col">
+                  <label className="text-sm font-medium text-gray-600">Name</label>
+                  <input
+                    type="text"
+                    name="displayName"
+                    value={user.displayName}
+                    onChange={handleChange}
+                    className="border rounded px-3 py-2"
+                  />
+                </div>
+
+
                 <div className="flex flex-col">
                   <label className="text-sm font-medium text-gray-600">Theme</label>
                   <select
@@ -130,10 +160,13 @@ export default function ProfilePage() {
               </form>
             ) : (
               <ul className="text-sm text-gray-700 space-y-1">
+                {/* <li><strong>Name:</strong> {user.displayName}</li>
+                <li><strong>Email:</strong> {user.email}</li> */}
                 <li><strong>Theme:</strong> {user.preferences?.theme}</li>
                 <li><strong>Tasks per page:</strong> {user.preferences?.tasksPerPage}</li>
                 <li><strong>Default sort:</strong> {user.preferences?.defaultSort}</li>
               </ul>
+
             )}
           </div>
 
