@@ -38,7 +38,7 @@ export default function CreateTaskPage() {
       },
       {
         onSuccess: () => {
-          reset(); // clear form on success
+          reset();
         },
       }
     );
