@@ -14,7 +14,7 @@ export default function AddTaskForm() {
       name,
       description,
       startDate: new Date(),
-      deadline: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000), // +3 days
+      deadline: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000),
     });
 
     setName('');

@@ -20,16 +20,8 @@ export default function CreateTaskPage() {
   const mutation = useCreateTask();
 
   const onSubmit = (data: FormValues) => {
-    const generateId = () => {
-      const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-      return Array.from({ length: 16 }, () =>
-        chars.charAt(Math.floor(Math.random() * chars.length))
-      ).join('');
-    };
-
     mutation.mutate(
       {
-        id: generateId(),
         name: data.name,
         description: data.description,
         startDate: new Date().toISOString(),

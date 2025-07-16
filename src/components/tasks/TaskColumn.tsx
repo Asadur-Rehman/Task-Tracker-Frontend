@@ -1,15 +1,16 @@
 'use client';
 
-import { useQuery } from '@tanstack/react-query';
+import { useInfiniteQuery } from '@tanstack/react-query';
 import TaskTile from './TaskTile';
-import { fetchTasksByStatus, Task } from '../../services/api/tasks/fetchTasksByStatus';
+import {
+  fetchPaginatedTasksByStatus,
+  ParsedTask,
+} from '../../services/api/tasks/fetchTasksByStatus';
 
 interface TaskColumnProps {
   title: string;
   color: 'blue' | 'orange' | 'green';
 }
-
-
 
 export default function TaskColumn({ title, color }: TaskColumnProps) {
   const borderColor = {
@@ -24,38 +25,67 @@ export default function TaskColumn({ title, color }: TaskColumnProps) {
     green: 'text-green-600',
   }[color];
 
-  const taskStatus = {'blue': 'todo', 'orange': 'inprogress', 'green': 'completed'}
+  const taskStatus = {
+    blue: 'Todo',
+    orange: 'InProgress',
+    green: 'Completed',
+  }[color] as 'Todo' | 'InProgress' | 'Completed';
 
   const {
-    data: tasks,
+    data,
     isLoading,
     isError,
     error,
-  } = useQuery({
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  } = useInfiniteQuery<
+    { tasks: ParsedTask[]; nextCursor: string | null },
+    Error
+  >({
     queryKey: ['tasks', color],
-    queryFn: () => fetchTasksByStatus(taskStatus[color] as 'todo' | 'inprogress' | 'completed'),
+    queryFn: ({ pageParam }) =>
+      fetchPaginatedTasksByStatus(taskStatus, pageParam as string | undefined),
+    initialPageParam: undefined,
+    getNextPageParam: (lastPage) => lastPage.nextCursor,
   });
+  
+
+  const tasks = data?.pages.flatMap((page) => page.tasks) ?? [];
 
   return (
-    <div className={`flex flex-col rounded-lg border-2 ${borderColor} bg-white p-4 shadow-sm min-h-[500px]`}>
+    <div
+      className={`flex flex-col rounded-lg border-2 ${borderColor} bg-white p-4 shadow-sm min-h-[500px]`}
+    >
       <h2 className={`text-lg font-semibold ${titleColor} mb-4`}>{title}</h2>
 
       <div className="flex flex-col gap-4">
         {isLoading ? (
           <p className="text-gray-400 italic">Loading tasks...</p>
         ) : isError ? (
-          <p className="text-red-500 italic">Error: {(error as Error).message}</p>
-        ) : tasks && tasks.length > 0 ? (
-          tasks.map((task) => (
-            <TaskTile
-              key={task.id}
-              id={task.id}
-              name={task.name}
-              description={task.description}
-              deadline={task.deadline}
-              color={color}
-            />
-          ))
+          <p className="text-red-500 italic">Error: {error.message}</p>
+        ) : tasks.length > 0 ? (
+          <>
+            {tasks.map((task) => (
+              <TaskTile
+                key={task.id}
+                id={task.id}
+                name={task.name}
+                description={task.description}
+                deadline={task.deadline} // 👈 Keep as timestamp object
+                color={color}
+              />
+            ))}
+            {hasNextPage && (
+              <button
+                onClick={() => fetchNextPage()}
+                disabled={isFetchingNextPage}
+                className="mt-4 px-4 py-2 text-sm rounded bg-gray-200 hover:bg-gray-300 text-gray-800"
+              >
+                {isFetchingNextPage ? 'Loading more...' : 'Load More'}
+              </button>
+            )}
+          </>
         ) : (
           <p className="text-gray-400 italic">No tasks to show</p>
         )}

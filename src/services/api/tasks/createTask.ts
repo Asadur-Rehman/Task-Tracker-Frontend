@@ -1,5 +1,5 @@
 export interface CreateTaskInput {
-    id: string;
+    id?: string;
     name: string;
     description: string;
     startDate: string;

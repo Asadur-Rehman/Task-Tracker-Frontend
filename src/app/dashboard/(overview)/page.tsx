@@ -1,5 +1,6 @@
 'use client';
 
+import { useNumberOfTasks } from '@/src/hooks/tasks/useNumberOfTasks';
 import {
   PieChart,
   Pie,
@@ -26,13 +27,19 @@ export default function Home() {
     'Started task: "Implement Auth"',
   ];
 
+  const { data: totalTasks, isLoading, error } = useNumberOfTasks('userId');
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-100 to-blue-200 p-6">
       <h1 className="text-3xl font-bold text-gray-800 mb-6">Dashboard</h1>
 
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-        <StatCard title="Total Tasks" value="32" color="bg-blue-500" />
+        <StatCard
+          title="Total Tasks"
+          value={isLoading ? 'Loading...' : totalTasks?.toString() ?? '0'}
+          color="bg-blue-500"
+        />
         <StatCard title="Completed" value="18" color="bg-green-500" />
         <StatCard title="In Progress" value="10" color="bg-orange-400" />
         <StatCard title="To Do" value="4" color="bg-gray-500" />

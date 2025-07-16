@@ -35,13 +35,27 @@ export default function EditTaskModal({ isOpen, onClose, task }: EditTaskModalPr
 
   useEffect(() => {
     if (task) {
+      let deadlineString = '';
+  
+      if (
+        task.deadline &&
+        typeof task.deadline === 'object' &&
+        '_seconds' in task.deadline &&
+        typeof task.deadline._seconds === 'number'
+      ) {
+        deadlineString = new Date(task.deadline._seconds * 1000).toISOString().split('T')[0];
+      } else if (typeof task.deadline === 'string') {
+        deadlineString = new Date(task.deadline).toISOString().split('T')[0];
+      }
+  
       reset({
         name: task.name,
         description: task.description,
-        deadline: new Date(task.deadline._seconds * 1000).toISOString().split('T')[0],
+        deadline: deadlineString,
       });
     }
   }, [task, reset]);
+  
 
   const onSubmit = async (data: FormValues) => {
     updateMutation.mutate(

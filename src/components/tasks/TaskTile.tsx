@@ -3,21 +3,15 @@
 import { useState } from 'react';
 import { useDeleteTask } from '../../hooks/tasks/useDeleteTask';
 import { useUpdateTaskStatus } from '../../hooks/tasks/useUpdateTaskStatus';
-import { Timestamp } from 'firebase/firestore';
 import EditTaskModal from './EditTaskModal';
-
-
 
 interface TaskTileProps {
   id: string;
   name: string;
   description: string;
-  deadline: Timestamp; 
+  deadline: string; 
   color: string;
 }
-
-
-
 
 export default function TaskTile({ id, name, description, deadline, color }: TaskTileProps) {
   const [showActions, setShowActions] = useState(false);
@@ -68,13 +62,11 @@ export default function TaskTile({ id, name, description, deadline, color }: Tas
     return null;
   };
 
-  const formattedDeadline = new Date(deadline._seconds * 1000).toLocaleDateString('en-GB', {
+  const formattedDeadline = new Date(deadline).toLocaleDateString('en-GB', {
     year: 'numeric',
     month: 'long',
     day: 'numeric',
-    timeZone: 'UTC',
   });
-  
 
   return (
     <>
@@ -95,7 +87,7 @@ export default function TaskTile({ id, name, description, deadline, color }: Tas
           <div className="absolute top-2 right-2 flex gap-2">
             <button
               onClick={() => setIsEditOpen(true)}
-              className="text-blue-600 ..."
+              className="text-blue-600 text-sm hover:underline"
             >
               ✏️ Edit
             </button>
@@ -112,7 +104,14 @@ export default function TaskTile({ id, name, description, deadline, color }: Tas
       <EditTaskModal
         isOpen={isEditOpen}
         onClose={() => setIsEditOpen(false)}
-        task={{ id, name, description, deadline, status: color === 'blue' ? 'Todo' : color === 'orange' ? 'In Progress' : 'Completed' }}
+        task={{
+          id,
+          name,
+          description,
+          deadline,
+          
+          status: color === 'blue' ? 'Todo' : color === 'orange' ? 'In Progress' : 'Completed',
+        }}
       />
     </>
   );
