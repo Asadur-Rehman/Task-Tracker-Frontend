@@ -9,7 +9,6 @@ export function useLogin() {
     mutationFn: loginUser,
     onSuccess: (data) => {
 
-      console.log(data);
 
       localStorage.setItem('token', data.idToken);
       document.cookie = `idToken=${data.idToken}; path=/`;

@@ -1,7 +1,7 @@
 "use client";
 
 import Link from 'next/link';
-import NavLinks from '@/src/components/dashboard/nav-links'; // Keep this if it renders the navigation items
+import NavLinks from '@/src/components/dashboard/nav-links';
 import { PowerIcon } from '@heroicons/react/24/outline';
 
 export default function SideNav() {

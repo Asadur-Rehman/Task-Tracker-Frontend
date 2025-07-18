@@ -72,7 +72,7 @@ export default function TaskColumn({ title, color }: TaskColumnProps) {
                 id={task.id}
                 name={task.name}
                 description={task.description}
-                deadline={task.deadline} // 👈 Keep as timestamp object
+                deadline={task.deadline}
                 color={color}
               />
             ))}

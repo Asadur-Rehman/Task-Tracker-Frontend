@@ -4,9 +4,11 @@ import { useUser } from '../../../hooks/profile/useProfile';
 import { useUpdateUser } from '../../../hooks/profile/useUpdateProfile';
 import { useState, useEffect } from 'react';
 import { Timestamp } from 'firebase/firestore';
+import { useUserContext } from '@/src/contexts/UserContext';
+
 
 export default function ProfilePage() {
-  const { data: userData, isLoading, isError } = useUser();
+  const { user: userData, setUser: setGlobalUser, isLoading, isError } = useUserContext();
   const updateUser = useUpdateUser();
 
   const [user, setUser] = useState(userData);
@@ -38,7 +40,7 @@ export default function ProfilePage() {
     const { name, value } = e.target;
     setUser((prev) => {
       if (!prev) return prev;
-  
+
       if (['theme', 'tasksPerPage', 'defaultSort'].includes(name)) {
         return {
           ...prev,
@@ -48,25 +50,27 @@ export default function ProfilePage() {
           },
         };
       }
-  
+
       return {
         ...prev,
         [name]: value,
       };
     });
   };
-  
 
   const handleSave = () => {
     if (user) {
       const { createdAt, ...rest } = user;
-      updateUser.mutate(rest);
-      setIsEditing(false);
+      updateUser.mutate(rest, {
+        onSuccess: (updatedUser) => {
+          setGlobalUser({ ...user, ...updatedUser });
+          setIsEditing(false);
+        },
+      });
     }
   };
-  
 
-  const formattedCreatedAt = new Date(user.createdAt._seconds * 1000).toLocaleDateString('en-GB', {
+  const formattedCreatedAt = new Date(user.createdAt).toLocaleDateString('en-GB', {
     year: 'numeric',
     month: 'long',
     day: 'numeric',
@@ -160,8 +164,7 @@ export default function ProfilePage() {
               </form>
             ) : (
               <ul className="text-sm text-gray-700 space-y-1">
-                {/* <li><strong>Name:</strong> {user.displayName}</li>
-                <li><strong>Email:</strong> {user.email}</li> */}
+
                 <li><strong>Theme:</strong> {user.preferences?.theme}</li>
                 <li><strong>Tasks per page:</strong> {user.preferences?.tasksPerPage}</li>
                 <li><strong>Default sort:</strong> {user.preferences?.defaultSort}</li>

@@ -29,7 +29,6 @@ export async function fetchUserProfile(): Promise<User> {
 
     const data = await res.json();
 
-    console.log(data);
 
     return data;
 }

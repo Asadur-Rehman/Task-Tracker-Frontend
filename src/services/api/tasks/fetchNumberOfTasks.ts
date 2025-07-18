@@ -17,7 +17,6 @@ export async function fetchNumberOfTasks(): Promise<number> {
   
     const number = parseInt(data, 10);
 
-    console.log(number);
   
     if (isNaN(number)) {
       throw new Error('Invalid number returned from backend');

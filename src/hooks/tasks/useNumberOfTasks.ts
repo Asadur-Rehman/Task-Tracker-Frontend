@@ -10,4 +10,3 @@ export function useNumberOfTasks(userId: string) {
         enabled: !!userId,
     });
 }
-  

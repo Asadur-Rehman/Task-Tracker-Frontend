@@ -1,3 +1,4 @@
+// hooks/profile/useUpdateProfile.tsx
 'use client';
 
 import { useMutation } from '@tanstack/react-query';
@@ -7,14 +8,13 @@ import { toast } from 'sonner';
 export function useUpdateUser() {
   return useMutation({
     mutationFn: updateUser,
-    
-    onSuccess: () => {
+    onSuccess: (updatedUser) => {
       toast.success('Profile updated successfully!');
+
     },
     onError: (err: Error) => {
       console.error(err);
       toast.error('Failed to update profile.');
     },
-    
   });
 }

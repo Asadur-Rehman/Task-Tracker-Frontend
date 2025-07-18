@@ -5,4 +5,5 @@ export const useTasks = () =>
   useQuery({
     queryKey: ['tasks'],
     queryFn: () => authorizedFetcher('http://localhost:8000/tasks'),
-  });
+  }
+);

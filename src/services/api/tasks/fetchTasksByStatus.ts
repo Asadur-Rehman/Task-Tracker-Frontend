@@ -53,7 +53,6 @@ export async function fetchPaginatedTasksByStatus(
     throw new Error(`Error fetching tasks for ${status}: ${response.statusText}`);
   }
 
-  console.log(response);
 
   const data = await response.json();
 
