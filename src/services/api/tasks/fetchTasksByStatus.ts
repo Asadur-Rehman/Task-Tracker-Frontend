@@ -1,3 +1,5 @@
+import { useUserContext } from "@/src/contexts/UserContext";
+
 export interface FirestoreTimestamp {
   _seconds: number;
   _nanoseconds: number;
@@ -32,11 +34,15 @@ function parseTimestamp(ts: FirestoreTimestamp): string {
   return new Date(ts._seconds * 1000).toISOString();
 }
 
+// const user = useUserContext();
+
 export async function fetchPaginatedTasksByStatus(
   status: 'Todo' | 'InProgress' | 'Completed',
   cursor?: string,
   limit: number = 4
 ): Promise<PaginatedTaskResponse> {
+
+  
   const token = localStorage.getItem('token');
   if (!token) throw new Error('User not authenticated');
 

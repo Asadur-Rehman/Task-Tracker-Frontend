@@ -12,13 +12,15 @@ interface User {
     };
 }
     
-export async function fetchUserProfile(): Promise<User> {
+export async function fetchUserProfile(): Promise<User | null> {
     const token = localStorage.getItem('token');
-    if (!token) throw new Error('User not authenticated');
-
     const localId = localStorage.getItem('localId');
-    if (!localId) throw new Error('User not authenticated');
+  
+    if (!token || !localId) {
 
+        return null;
+    }
+  
     const res = await fetch(`${process.env.NEXT_PUBLIC_LOCALHOST}/users/${localId}`);
 
 

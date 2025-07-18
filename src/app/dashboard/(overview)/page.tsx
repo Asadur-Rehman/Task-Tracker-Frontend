@@ -1,6 +1,6 @@
 'use client';
 
-import { useNumberOfTasks } from '@/src/hooks/tasks/useNumberOfTasks';
+import { useStats } from '@/src/hooks/tasks/useStats';
 import {
   PieChart,
   Pie,
@@ -12,13 +12,9 @@ import {
 
 export default function Home() {
 
-  const priorityData = [
-    { name: 'High', value: 10 },
-    { name: 'Medium', value: 15 },
-    { name: 'Low', value: 7 },
-  ];
 
-  const COLORS = ['#EF4444', '#FBBF24', '#10B981'];
+  const COLORS = ['#22C55E', '#FB923C', '#6B7280'];
+
 
   const recentActivities = [
     'Created task: "Design UI"',
@@ -27,7 +23,15 @@ export default function Home() {
     'Started task: "Implement Auth"',
   ];
 
-  const { data: totalTasks, isLoading, error } = useNumberOfTasks('userId');
+  const { data, isLoading, error } = useStats('userId');
+
+  const priorityData = isLoading || !data
+  ? []
+  : [
+      { name: 'Completed', value: data.completedTasks ?? 0 },
+      { name: 'In Progress', value: data.inProgressTasks ?? 0 },
+      { name: 'To Do', value: data.toDoTasks ?? 0 },
+    ];
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-100 to-blue-200 p-6">
@@ -37,19 +41,29 @@ export default function Home() {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         <StatCard
           title="Total Tasks"
-          value={isLoading ? 'Loading...' : totalTasks?.toString() ?? '0'}
+          value={isLoading ? 'Loading...' : data.totalTasks?.toString() ?? '0'}
           color="bg-blue-500"
         />
-        <StatCard title="Completed" value="18" color="bg-green-500" />
-        <StatCard title="In Progress" value="10" color="bg-orange-400" />
-        <StatCard title="To Do" value="4" color="bg-gray-500" />
+        <StatCard title="Completed" value={isLoading ? 'Loading...' : data.completedTasks?.toString() ?? '0'} color="bg-green-500" />
+        <StatCard title="In Progress" value={isLoading ? 'Loading...' : data.inProgressTasks?.toString() ?? '0'} color="bg-orange-400" />
+        <StatCard title="To Do" value={isLoading ? 'Loading...' : data.toDoTasks?.toString() ?? '0'} color="bg-gray-500" />
       </div>
 
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        <StatCard title="Overdue" value="2" color="bg-red-500" />
-        <StatCard title="Upcoming Deadlines" value="6" color="bg-yellow-400" />
-        <StatCard title="Completion Rate" value="56%" color="bg-indigo-500" />
+        <StatCard title="Overdue" value={isLoading ? 'Loading...' : data.overDueTasks?.toString() ?? '0'} color="bg-red-500" />
+        <StatCard title="Upcoming Deadlines" value={isLoading ? 'Loading...' : data.upcomingDeadlines?.toString() ?? '0'} color="bg-yellow-400" />
+        <StatCard
+          title="Completion Rate"
+          value={
+            isLoading
+              ? 'Loading...'
+              : data.completionRate != null
+                ? `${(data.completionRate * 100).toFixed(1)}%`
+                : '0%'
+          }
+          color="bg-indigo-500"
+        />
       </div>
 
 
@@ -57,26 +71,30 @@ export default function Home() {
 
         <div className="bg-white rounded-2xl shadow-md p-6 h-96">
           <h2 className="text-lg font-semibold mb-4 text-gray-700">Tasks by Priority</h2>
-          <ResponsiveContainer width="100%" height="80%">
-            <PieChart>
-              <Pie
-                data={priorityData}
-                dataKey="value"
-                nameKey="name"
-                cx="50%"
-                cy="50%"
-                outerRadius={80}
-                fill="#8884d8"
-                label
-              >
-                {priorityData.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={COLORS[index]} />
-                ))}
-              </Pie>
-              <Tooltip />
-              <Legend />
-            </PieChart>
-          </ResponsiveContainer>
+          {priorityData.length > 0 ? (
+            <ResponsiveContainer width="100%" height={200}>
+              <PieChart>
+                <Pie
+                  data={priorityData}
+                  dataKey="value"
+                  nameKey="name"
+                  cx="50%"
+                  cy="50%"
+                  outerRadius={80}
+                  fill="#8884d8"
+                  label
+                >
+                  {priorityData.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                  ))}
+                </Pie>
+                <Tooltip />
+                <Legend />
+              </PieChart>
+            </ResponsiveContainer>
+          ) : (
+            <p className="text-sm text-gray-500">No data available</p>
+          )}
         </div>
 
 

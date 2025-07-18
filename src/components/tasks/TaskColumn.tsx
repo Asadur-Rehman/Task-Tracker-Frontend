@@ -6,6 +6,7 @@ import {
   fetchPaginatedTasksByStatus,
   ParsedTask,
 } from '../../services/api/tasks/fetchTasksByStatus';
+import { useUserContext } from '@/src/contexts/UserContext';
 
 interface TaskColumnProps {
   title: string;
@@ -13,6 +14,7 @@ interface TaskColumnProps {
 }
 
 export default function TaskColumn({ title, color }: TaskColumnProps) {
+  const {user} = useUserContext();
   const borderColor = {
     blue: 'border-blue-400',
     orange: 'border-orange-400',
@@ -45,7 +47,7 @@ export default function TaskColumn({ title, color }: TaskColumnProps) {
   >({
     queryKey: ['tasks', color],
     queryFn: ({ pageParam }) =>
-      fetchPaginatedTasksByStatus(taskStatus, pageParam as string | undefined),
+      fetchPaginatedTasksByStatus(taskStatus, pageParam as string | undefined, user?.preferences?.tasksPerPage),
     initialPageParam: undefined,
     getNextPageParam: (lastPage) => lastPage.nextCursor,
   });
