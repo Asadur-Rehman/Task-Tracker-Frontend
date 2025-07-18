@@ -1,4 +1,5 @@
 import { useUserContext } from "@/src/contexts/UserContext";
+import { orderBy } from "firebase/firestore";
 
 export interface FirestoreTimestamp {
   _seconds: number;
@@ -39,7 +40,8 @@ function parseTimestamp(ts: FirestoreTimestamp): string {
 export async function fetchPaginatedTasksByStatus(
   status: 'Todo' | 'InProgress' | 'Completed',
   cursor?: string,
-  limit: number = 4
+  limit: number = 4,
+  orderBy?: string
 ): Promise<PaginatedTaskResponse> {
 
   
@@ -48,6 +50,7 @@ export async function fetchPaginatedTasksByStatus(
 
   const params = new URLSearchParams({ status, limit: limit.toString() });
   if (cursor) params.append('cursor', cursor);
+  if (orderBy) params.append('orderBy', orderBy);
 
   const response = await fetch(`${process.env.NEXT_PUBLIC_LOCALHOST}/tasks/status/paginated?${params.toString()}`, {
     headers: {

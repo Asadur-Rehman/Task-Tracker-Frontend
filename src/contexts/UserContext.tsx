@@ -7,7 +7,7 @@ import { fetchUserProfile } from '@/src/services/api/profile/fetchProfile';
 type Preferences = {
   theme: 'light' | 'dark';
   tasksPerPage: number;
-  defaultSort: 'dueDate' | 'priority' | 'createDate';
+  defaultSort: 'startDate' | 'deadline';
 };
 
 type User = {

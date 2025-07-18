@@ -47,7 +47,7 @@ export default function TaskColumn({ title, color }: TaskColumnProps) {
   >({
     queryKey: ['tasks', color],
     queryFn: ({ pageParam }) =>
-      fetchPaginatedTasksByStatus(taskStatus, pageParam as string | undefined, user?.preferences?.tasksPerPage),
+      fetchPaginatedTasksByStatus(taskStatus, pageParam as string | undefined, user?.preferences?.tasksPerPage, user?.preferences?.defaultSort),
     initialPageParam: undefined,
     getNextPageParam: (lastPage) => lastPage.nextCursor,
   });

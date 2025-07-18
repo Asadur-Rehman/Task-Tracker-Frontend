@@ -8,7 +8,7 @@ interface User {
     preferences?: {
         theme: 'light' | 'dark';
         tasksPerPage: number;
-        defaultSort: 'dueDate' | 'priority' | 'createDate';
+        defaultSort: 'startDate' | 'deadline';
     };
 }
     

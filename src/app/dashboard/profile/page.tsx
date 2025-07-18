@@ -148,9 +148,8 @@ export default function ProfilePage() {
                     onChange={handleChange}
                     className="border rounded px-3 py-2"
                   >
-                    <option value="dueDate">Due Date</option>
-                    <option value="priority">Priority</option>
-                    <option value="createDate">Create Date</option>
+                    <option value="startDate">Start Date</option>
+                    <option value="deadline">Deadline</option>
                   </select>
                 </div>
 
