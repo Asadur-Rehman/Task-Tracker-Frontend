@@ -6,7 +6,6 @@ import { PowerIcon } from '@heroicons/react/24/outline';
 
 export default function SideNav() {
   const handleSignOut = () => {
-
     localStorage.removeItem('token');
     localStorage.clear();
   
@@ -14,15 +13,13 @@ export default function SideNav() {
 
     window.location.href = "/";
   };
-  
-  
+
   return (
     <aside className="flex h-full flex-col bg-white border-r px-3 py-4 md:px-4 shadow-sm">
 
       <Link href="/" className="mb-6 flex items-center justify-center text-blue-600">
         <span className="text-2xl font-extrabold tracking-tight">Task Tracker</span>
       </Link>
-
 
       <nav className="flex grow flex-col justify-between space-y-4">
         <NavLinks />

@@ -58,7 +58,7 @@ export default function TaskTile({ id, name, description, deadline, color }: Tas
         </button>
       );
     }
-
+    
     return null;
   };
 

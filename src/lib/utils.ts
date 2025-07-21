@@ -1,6 +1,3 @@
-
-  
-
 export function getCookie(name: string): string | null {
   const cookies = document.cookie
     .split('; ')
@@ -8,4 +5,3 @@ export function getCookie(name: string): string | null {
 
   return cookies ? decodeURIComponent(cookies.split('=')[1]) : null;
 }
-  

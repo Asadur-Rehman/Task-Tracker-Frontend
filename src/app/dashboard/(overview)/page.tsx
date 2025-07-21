@@ -12,9 +12,7 @@ import {
 
 export default function Home() {
 
-
   const COLORS = ['#22C55E', '#FB923C', '#6B7280'];
-
 
   const recentActivities = [
     'Created task: "Design UI"',
@@ -35,8 +33,8 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-100 to-blue-200 p-6">
-      <h1 className="text-3xl font-bold text-gray-800 mb-6">Dashboard</h1>
 
+      <h1 className="text-3xl font-bold text-gray-800 mb-6">Dashboard</h1>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         <StatCard
@@ -48,7 +46,6 @@ export default function Home() {
         <StatCard title="In Progress" value={isLoading ? 'Loading...' : data.inProgressTasks?.toString() ?? '0'} color="bg-orange-400" />
         <StatCard title="To Do" value={isLoading ? 'Loading...' : data.toDoTasks?.toString() ?? '0'} color="bg-gray-500" />
       </div>
-
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
         <StatCard title="Overdue" value={isLoading ? 'Loading...' : data.overDueTasks?.toString() ?? '0'} color="bg-red-500" />
@@ -66,11 +63,12 @@ export default function Home() {
         />
       </div>
 
-
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
 
         <div className="bg-white rounded-2xl shadow-md p-6 h-96">
+
           <h2 className="text-lg font-semibold mb-4 text-gray-700">Tasks by Priority</h2>
+
           {priorityData.length > 0 ? (
             <ResponsiveContainer width="100%" height={200}>
               <PieChart>
@@ -95,11 +93,14 @@ export default function Home() {
           ) : (
             <p className="text-sm text-gray-500">No data available</p>
           )}
+
         </div>
 
 
         <div className="bg-white rounded-2xl shadow-md p-6 h-96 overflow-y-auto">
+
           <h2 className="text-lg font-semibold mb-4 text-gray-700">Recent Activity</h2>
+
           <ul className="space-y-3">
             {recentActivities.map((activity, index) => (
               <li
@@ -110,6 +111,7 @@ export default function Home() {
               </li>
             ))}
           </ul>
+          
         </div>
       </div>
     </div>

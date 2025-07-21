@@ -10,7 +10,6 @@ export function useUpdateUser() {
     mutationFn: updateUser,
     onSuccess: (updatedUser) => {
       toast.success('Profile updated successfully!');
-
     },
     onError: (err: Error) => {
       console.error(err);

@@ -1,4 +1,3 @@
-
 import { cookies } from 'next/headers';
 
 type CookieOptions = {
@@ -13,8 +12,7 @@ export function setCookie(
   value: string,
   options: CookieOptions = {}
 ) {
-
-    if (typeof window !== 'undefined') {
+  if (typeof window !== 'undefined') {
     let cookieStr = `${key}=${value}`;
 
     if (options.maxAge) {
@@ -30,9 +28,7 @@ export function setCookie(
   }
 }
 
-
 export async function getCookie(key: string): Promise<string | undefined> {
-
     if (typeof window !== 'undefined') {
     const value = document.cookie
       .split('; ')
@@ -47,9 +43,7 @@ export async function getCookie(key: string): Promise<string | undefined> {
   }
 }
 
-
 export function deleteCookie(key: string) {
-
     if (typeof window !== 'undefined') {
     document.cookie = `${key}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/`;
   }

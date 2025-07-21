@@ -4,7 +4,6 @@ import { ArrowRightIcon } from '@heroicons/react/24/outline';
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
 
-
 export default function Home() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
@@ -12,7 +11,6 @@ export default function Home() {
     const hasToken = document.cookie.includes('idToken');
     setIsLoggedIn(hasToken);
   }, []);
-
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-100 to-blue-200 p-4">
@@ -22,11 +20,9 @@ export default function Home() {
           Welcome to Task Tracker!
         </h1>
 
-
         <p className="text-gray-600 max-w-md">
           Organize your tasks, stay productive, and never miss a deadline. Let’s get started.
         </p>
-
 
         <Link
           href="/login"

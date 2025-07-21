@@ -1,11 +1,8 @@
 'use client';
-
-import { useUser } from '../../../hooks/profile/useProfile';
 import { useUpdateUser } from '../../../hooks/profile/useUpdateProfile';
 import { useState, useEffect } from 'react';
 import { Timestamp } from 'firebase/firestore';
 import { useUserContext } from '@/src/contexts/UserContext';
-
 
 export default function ProfilePage() {
   const { user: userData, setUser: setGlobalUser, isLoading, isError } = useUserContext();

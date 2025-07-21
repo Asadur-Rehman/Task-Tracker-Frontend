@@ -35,8 +35,6 @@ function parseTimestamp(ts: FirestoreTimestamp): string {
   return new Date(ts._seconds * 1000).toISOString();
 }
 
-// const user = useUserContext();
-
 export async function fetchPaginatedTasksByStatus(
   status: 'Todo' | 'InProgress' | 'Completed',
   cursor?: string,
@@ -44,7 +42,6 @@ export async function fetchPaginatedTasksByStatus(
   orderBy?: string
 ): Promise<PaginatedTaskResponse> {
 
-  
   const token = localStorage.getItem('token');
   if (!token) throw new Error('User not authenticated');
 

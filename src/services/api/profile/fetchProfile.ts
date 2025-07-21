@@ -17,12 +17,10 @@ export async function fetchUserProfile(): Promise<User | null> {
     const localId = localStorage.getItem('localId');
   
     if (!token || !localId) {
-
         return null;
     }
   
     const res = await fetch(`${process.env.NEXT_PUBLIC_LOCALHOST}/users/${localId}`);
-
 
     if (!res.ok) {
         const errMsg = await res.text();
@@ -30,7 +28,6 @@ export async function fetchUserProfile(): Promise<User | null> {
     }
 
     const data = await res.json();
-
 
     return data;
 }
