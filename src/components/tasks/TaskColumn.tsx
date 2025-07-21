@@ -50,8 +50,7 @@ export default function TaskColumn({ title, color }: TaskColumnProps) {
       fetchPaginatedTasksByStatus(taskStatus, pageParam as string | undefined, user?.preferences?.tasksPerPage, user?.preferences?.defaultSort),
     initialPageParam: undefined,
     getNextPageParam: (lastPage) => lastPage.nextCursor,
-  });
-  
+  });  
 
   const tasks = data?.pages.flatMap((page) => page.tasks) ?? [];
 
